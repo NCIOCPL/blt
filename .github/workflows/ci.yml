@@ -15,11 +15,46 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build
+  lint-and-test:
+    name: Lint and Test
     runs-on: ubuntu-latest
-
     steps:
-      - name: Hello
+      - uses: actions/checkout@v7
+
+      # Pinned at v2: https://github.com/shivammathur/setup-php/releases/tag/v2
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+          coverage: none
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
         run: |
-          echo "Hello, world!"
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Run PHPCS
+        run: vendor/bin/phpcs
+
+      # Scoped to tests/phpunit/Robo only for now. tests/phpunit/src extends
+      # BltProjectTestBase, which spins up a full sandboxed BLT project per
+      # test (git init, composer install, etc.) -- needs its own runner
+      # setup and a deliberate decision before it goes in CI, not a blind
+      # `phpunit` run against the whole tests/ directory.
+      # success() || failure() (not always()) is deliberate: we want this to
+      # run whether PHPCS passed or failed, but NOT if the job was
+      # cancelled -- always() would still kick this off on a cancelled run,
+      # wasting runner time on a result nobody's waiting for.
+      - name: Run PHPUnit (unit tests)
+        if: success() || failure()
+        run: vendor/bin/phpunit tests/phpunit/Robo
