@@ -54,7 +54,6 @@ class ComposerCommand extends BltTasks {
           ->dir($this->getConfigValue('repo.root'))
           ->interactive($this->input()->isInteractive())
           ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE);
-        ;
         $result = $task->run();
         if (!$result->wasSuccessful()) {
           throw new BltException("Unable to install {$package_name} package.");

@@ -96,7 +96,7 @@ class FilesetManager implements ConfigAwareInterface, LoggerAwareInterface {
   }
 
   /**
-   * Gets all @fileset annotated methods for a given $class..
+   * Gets all @fileset annotated methods for a given $class.
    *
    * @param string $class
    *   The class to be scanned for annotated methods.
