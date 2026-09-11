@@ -13,7 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Path;
 
 /**
- * Defines commands for installing and updating BLT..
+ * Defines commands for installing and updating BLT.
  */
 class UpdateCommand extends BltTasks {
 

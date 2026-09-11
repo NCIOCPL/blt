@@ -65,9 +65,9 @@ class Blt implements ContainerAwareInterface, LoggerAwareInterface {
    */
   public function __construct(
     Config $config,
-    InputInterface $input = NULL,
-    OutputInterface $output = NULL,
-    ClassLoader $classLoader = NULL,
+    ?InputInterface $input = NULL,
+    ?OutputInterface $output = NULL,
+    ?ClassLoader $classLoader = NULL,
   ) {
 
     $this->setConfig($config);
